@@ -43,8 +43,8 @@ and add zmk-studio-extras to this zmk-config. Keep my keymap, layers and
 settings unchanged. Make the build pass.
 ```
 
-URL を開けない AI には、[AGENTS.md](AGENTS.md) の中身をそのまま貼る。
-If your AI can't open URLs, paste the contents of [AGENTS.md](AGENTS.md) instead.
+URL を開けない AI には、[AGENTS.md](AGENTS.md) の中身を貼り、[studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) を自分で `config/` に置く。
+If your AI can't open URLs, paste [AGENTS.md](AGENTS.md) and put [studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) into `config/` yourself.
 
 ### 3. ファームを作って焼く / Build and flash
 
@@ -68,13 +68,18 @@ CONFIG_ZMK_STUDIO=y
 CONFIG_ZMK_STUDIO_LOCKING=n
 ```
 
-`build.yaml`(左手 central だけ / central side only)
+`build.yaml`(`snippet` は左手 central だけ / `snippet` on the central side only)
 ```yaml
 include:
   - board: nice_nano//zmk        # ← 自分のボード / your board
     shield: corne_left           # ← 自分のシールド / your shield
     snippet: studio-rpc-usb-uart
+  - board: nice_nano//zmk
+    shield: corne_right
 ```
+
+古いボード名は書き換える(同じ基板)/ Rename old board names (same hardware):
+`nice_nano_v2` → `nice_nano//zmk`、`seeeduino_xiao_ble` → `xiao_ble//zmk`
 
 キーの並びの定義(physical layout)がない時 / If your keyboard has no physical layout:
 https://zmk.dev/docs/development/hardware-integration/physical-layouts
@@ -106,6 +111,7 @@ manifest:
 #include <dt-bindings/zmk/keys.h>
 #include "studio_extras_slots.dtsi"   // ← この行を足す / add this line
 ```
+今ある `combos` はそのままで大丈夫。/ Existing `combos` can stay as they are.
 
 ## 4. 確かめる / Check
 
