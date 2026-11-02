@@ -43,6 +43,9 @@ and add zmk-studio-extras to this zmk-config. Keep my keymap, layers and
 settings unchanged. Make the build pass.
 ```
 
+URL を開けない AI には、[AGENTS.md](AGENTS.md) の中身をそのまま貼る。
+If your AI can't open URLs, paste the contents of [AGENTS.md](AGENTS.md) instead.
+
 ### 3. ファームを作って焼く / Build and flash
 
 ```bash
