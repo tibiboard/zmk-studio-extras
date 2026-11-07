@@ -1,6 +1,6 @@
 # AGENTS.md — add zmk-studio-extras to a zmk-config
 
-Goal: prepare keyboard-specific firmware for the chibiboard app by (1) enabling ZMK Studio support, if not already present, and (2) adding combo / tap-dance / macro editing extensions. Do not promise compatibility or hardware verification before testing.
+Goal: prepare keyboard-specific firmware for the tibiboard app by (1) enabling ZMK Studio support, if not already present, and (2) adding combo / tap-dance / macro editing extensions. Do not promise compatibility or hardware verification before testing.
 Before changing anything, back up the original firmware, complete config repository and runtime settings. Keep a reversible commit or file backup.
 Rule: do not change the user's existing keymap bindings, layers, combos, or settings. Only add.
 
@@ -9,17 +9,12 @@ Rule: do not change the user's existing keymap bindings, layers, combos, or sett
 1. Find the central (usually left) shield in `build.yaml`.
    Old board names do not build on this ZMK. Rename them in `build.yaml` first:
    `nice_nano_v2` → `nice_nano//zmk`, `seeeduino_xiao_ble` → `xiao_ble//zmk`
-   (same hardware). Other boards: check `app/boards` of https://github.com/tibiboard/zmk/tree/studio-extras .
+   (same hardware). XIAO BLE uses the `seeed_xiao` interconnect, while nice!nano and the example Corne shield use `pro_micro`. Preserve the actual keyboard's XIAO-compatible shield and pin definitions; never treat changing only the board name as a hardware conversion. Other boards: check `app/boards` of https://github.com/tibiboard/zmk/tree/studio-extras .
 2. ZMK Studio
-   - Add to `config/<keyboard>.conf` (create if missing):
-     ```
-     CONFIG_ZMK_STUDIO=y
-     ```
-     It also applies to the peripheral half. That is fine (tested); no need to split the file.
+   - Enable `CONFIG_ZMK_STUDIO=y` and the `studio-rpc-usb-uart` snippet on the central build. For `build.yaml`, use `cmake-args: -DCONFIG_ZMK_STUDIO=y` and `snippet: studio-rpc-usb-uart`. Preserve existing working Studio configuration rather than duplicating or silently removing it.
    - Keep Studio locking and an existing `&studio_unlock` key. If no unlock key exists, ask the owner where to put it; do not silently replace an existing binding or disable locking.
-   - In `build.yaml`, add `snippet: studio-rpc-usb-uart` to the central side entry only.
    - The keyboard needs a physical layout. Check the shield/board for `zmk,physical-layout`.
-     If missing, add one: https://zmk.dev/docs/development/hardware-integration/physical-layouts
+     If missing, add one: https://zmk.dev/docs/hardware-integration/physical-layouts
 3. `config/west.yml`: make the `zmk` project come from remote `tibiboard`
    (`url-base: https://github.com/tibiboard`), `revision: ba17c589301799dd1effd17b250e8049b32b6010` (verified studio-extras commit), `import: app/west.yml`.
    Keep the user's other projects/modules.

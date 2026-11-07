@@ -7,7 +7,7 @@ ZMKキーボードで、[ちびボードアプリ](https://tibiboard.net/shop/�
 
 ZMK Studioに対応済みの場合は、2の拡張機能を追加します。機種に合わせたファームウェアの作成・書き込みが必要です。既存のキー配置・レイヤー・コンボなどを変更するための手順ではありません。振動機能は含みません。
 
-This kit prepares keyboard-specific firmware for the chibiboard app: **(1) ZMK Studio support** and **(2) the app's combo / tap-dance / macro editing extensions**. If Studio is already supported, add the extensions. Preserve the existing keymap, layers and combos. Vibration is not included.
+This kit prepares keyboard-specific firmware for the tibiboard app: **(1) ZMK Studio support** and **(2) the app's combo / tap-dance / macro editing extensions**. If Studio is already supported, add the extensions. Preserve the existing keymap, layers and combos. Vibration is not included.
 
 先に現在のファーム（左右があれば両方）、zmk-config一式、アプリで変更した設定の控えを保存してください。ソースとアプリで変更した設定が同じとは限りません。
 Back up your current firmware for both halves, complete zmk-config and any runtime settings before migrating. Your source keymap may differ from settings edited in an app.
@@ -25,66 +25,31 @@ Choose either **With AI** or **Manual setup**. Both methods prepare the same fir
 
 <a id="ai-setup"></a>
 
-## 方法1：AIに頼む / With AI
+## AIに頼む / With AI
 
-この方法では、ZMK Studioへの対応と、ちびボードアプリ用の拡張機能の追加を、まとめてAIに依頼します。以下の3つを進めてください。「自分で修正する」の手順を別に行う必要はありません。
-
-Ask the AI to prepare both Studio support and the app extensions. Follow the three steps below; you do not also need to follow the manual setup.
-
-### 1. AI で zmk-config を開く / Open your zmk-config in an AI tool
-
-自分のキーボードの zmk-config リポジトリ(GitHub)を、手元に置いて AI で開く。
-Clone your zmk-config repo and open it in an AI coding tool.
-
-```bash
-git clone https://github.com/<あなた / you>/zmk-config
-cd zmk-config
-```
-
-| AI | 開き方 / How to open |
-|---|---|
-| Claude Code | `claude` |
-| Codex | `codex` |
-| Cursor など / etc. | フォルダを開く / Open the folder |
-
-### 2. 修正内容をAIに依頼する / Ask the AI to make the changes
+キーボードの設定ファイルを扱えるAI（Claude Code・Codexなど）に、次の文章をそのまま渡してください。
 
 ```text
-https://github.com/tibiboard/zmk-studio-extras/blob/main/AGENTS.md を読んで、
-この zmk-config をZMK Studioに対応させ、ちびボードアプリ用の拡張機能も追加してください。
-ZMK Studioに対応済みの部分は維持してください。
-今のキー配置・レイヤー・設定は変えないでください。ビルドが通るまで確かめてください。
+私のZMKキーボードで、ちびボードアプリを使えるようにしてください。
+https://github.com/tibiboard/zmk-studio-extras/blob/main/AGENTS.md
+の手順に従い、ZMK Studioへの対応と、コンボ・タップダンス・マクロを
+アプリで編集するための拡張機能を追加してください。
+今のキー配置・レイヤー・設定は維持し、変更前に戻せる控えを残してください。
+必要な設定ファイルが分からなければ、私に確認してください。
+ビルドを確認し、書き込むファイルと書き込み方を案内してください。
 ```
-
-```text
-Read https://github.com/tibiboard/zmk-studio-extras/blob/main/AGENTS.md
-and add zmk-studio-extras to this zmk-config. Keep my keymap, layers and
-settings unchanged. Make the build pass.
-```
-
-URL を開けない AI には、[AGENTS.md](AGENTS.md) の中身を貼り、[studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) を自分で `config/` に置く。
-If your AI can't open URLs, paste [AGENTS.md](AGENTS.md) and put [studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) into `config/` yourself.
-
-### 3. ファームウェアを作成して書き込む / Build and flash
-
-```bash
-git push
-```
-
-GitHub の **Actions** → 最新のビルド → **Artifacts** から `.uf2` をダウンロード → 分割式は左右それぞれに対応するファームを書き込む → [導入後の動作確認](#verify)
-GitHub **Actions** → latest run → **Artifacts** → download `.uf2` → flash each half with its matching firmware → [Check after installation](#verify)
 
 ---
 
 <a id="manual-setup"></a>
 
-## 方法2：自分で修正する / Manual setup
+## 自分で修正する / Manual setup
 
 **1はZMK Studioに対応させる作業、2・3はちびボードアプリ用の機能を追加する作業です。最後に4でファームウェアを作成して書き込みます。**
 
 ZMK Studioに対応済みの場合は、1の設定がそろっていることを確認してから、2へ進みます。既存のキー配置・レイヤー・コンボなどの設定は維持してください。
 
-Step 1 prepares ZMK Studio support; steps 2 and 3 add the chibiboard app extensions. Step 4 builds and flashes the firmware. If Studio already works, check the existing settings in step 1, then proceed to step 2. Preserve existing bindings and settings.
+Step 1 prepares ZMK Studio support; steps 2 and 3 add the tibiboard app extensions. Step 4 builds and flashes the firmware. If Studio already works, check the existing settings in step 1, then proceed to step 2. Preserve existing bindings and settings.
 
 ### 1. ZMK Studioに対応させる / Enable ZMK Studio
 
@@ -93,29 +58,41 @@ Step 1 prepares ZMK Studio support; steps 2 and 3 add the chibiboard app extensi
 Enable Studio and its USB transport, keep an unlock key, and provide a physical layout.
 公式 / Official: https://zmk.dev/docs/features/studio
 
-`config/<keyboard>.conf`
-```ini
-CONFIG_ZMK_STUDIO=y
-```
+親機側のビルドに、以下の例のように `CONFIG_ZMK_STUDIO=y` とUSB通信用の `snippet` を追加します。すでに設定されている場合は維持してください。
+
+Enable Studio and USB transport on the central build, as shown below. Preserve existing working settings.
 
 既存のStudio解錠キー（`&studio_unlock`）を維持します。未配置なら、どのキーに置くかを決めて追加してください。ロックを無効にする設定は必須ではありません。
 Keep an existing `&studio_unlock` key, or explicitly choose a key for it if missing. Disabling Studio locking is not required.
 
-`build.yaml`(`snippet` は left/right の名前ではなく central 側だけ / `snippet` on the central side only)
+`build.yaml` — **以下はnice!nanoを使うCorneの例です。** `board` と `shield` は、自分のキーボードの組み合わせを使ってください。Studio設定と `snippet` は親機側（central）へ追加します。
+
+**Example: Corne with nice!nano.** Keep the board/shield pair for your hardware. Add Studio settings and the USB snippet to the central build.
 ```yaml
 include:
   - board: nice_nano//zmk        # ← 自分のボード / your board
     shield: corne_left           # ← 自分のシールド / your shield
     snippet: studio-rpc-usb-uart
+    cmake-args: -DCONFIG_ZMK_STUDIO=y
   - board: nice_nano//zmk
     shield: corne_right
 ```
 
-古いボード名は書き換える(同じ基板)/ Rename old board names (same hardware):
-`nice_nano_v2` → `nice_nano//zmk`、`seeeduino_xiao_ble` → `xiao_ble//zmk`
+**XIAO BLE（Seeed Studio XIAO nRF52840）の場合**
+
+ボード名は `xiao_ble//zmk` です。上のCorne用の例をそのまま使うのではなく、今使っているXIAO対応キーボードの `shield`・配線定義を維持してください。nice!nanoとXIAOでは端子の対応が違います。
+
+For XIAO BLE, use `xiao_ble//zmk` with your existing XIAO-compatible shield and pin definitions. Do not copy the nice!nano/Corne combination: they use different interconnects.
+
+この導入キットが使うZMKでの旧名からの変更（同じハードウェアの場合のみ）：
+
+- nice!nano v2：`nice_nano_v2` → `nice_nano//zmk`
+- XIAO BLE：`seeeduino_xiao_ble` → `xiao_ble//zmk`
+
+[公式の対応ハードウェア一覧](https://zmk.dev/docs/hardware)
 
 キーの並びの定義(physical layout)がない時 / If your keyboard has no physical layout:
-https://zmk.dev/docs/development/hardware-integration/physical-layouts
+https://zmk.dev/docs/hardware-integration/physical-layouts
 
 ### 2. ちびボードアプリ用のZMKに切り替える / Use the extended ZMK
 
@@ -169,7 +146,7 @@ Save your changes, build with GitHub Actions or locally, then flash each half wi
 
 ## 導入後の動作確認（どちらの方法でも行います） / Check after either method
 
-1. [ちびボードアプリ](https://tibiboard.net/) でつなぐ → **コンボ・タップダンス・マクロ** のタブが使える。/ Connect in the [chibiboard app](https://tibiboard.net/) → **Combos / Tap-Dances / Macros** tabs work.
+1. [ちびボードアプリ](https://tibiboard.net/shop/使い方ガイド#app-downloads) でつなぐ → **コンボ・タップダンス・マクロ** のタブが使える。/ Connect in the [tibiboard app](https://tibiboard.net/shop/使い方ガイド#app-downloads) → **Combos / Tap-Dances / Macros** tabs work.
 
 2. コンボ・タップダンス・マクロを1つずつ作り、発動・変更・解除と、電源を入れ直しても設定が残るかを実機で確認します。通常の入力と左右接続も確認します。
 Check each editor, execution, clearing and persistence after a power cycle, as well as normal typing and split connectivity.
@@ -185,5 +162,5 @@ Undo: flash the backed-up original firmware to the correct half. When rebuilding
 Verified scope: local IPPO central and Corne central builds; Corne central/peripheral builds in GitHub Actions. Hardware operation and settings persistence have not been verified. Compatibility with every ZMK keyboard is not guaranteed.
 基準のZMKは本家 `8feeb52e`（2026-03）、この案内は拡張コミット `ba17c589` を固定参照します。
 ZMK base: upstream `8feeb52e` (2026-03); this guide pins extras commit `ba17c589`.
-振動の機能は入っていません。/ chibiboard vibration features are not included.
+振動の機能は入っていません。/ tibiboard vibration features are not included.
 License: MIT (ZMK と同じ / same as ZMK).
