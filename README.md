@@ -12,12 +12,24 @@ This kit prepares keyboard-specific firmware for the chibiboard app: **(1) ZMK S
 先に現在のファーム（左右があれば両方）、zmk-config一式、アプリで変更した設定の控えを保存してください。ソースとアプリで変更した設定が同じとは限りません。
 Back up your current firmware for both halves, complete zmk-config and any runtime settings before migrating. Your source keymap may differ from settings edited in an app.
 
-- AI に頼む / With AI → [AI に頼む](#ai-に頼む--with-ai)
-- 手で入れる / By hand → [1](#1-zmk-studio) → [2](#2-westyml) → [3](#3-keymap) → [4](#4-確かめる--check)
+## 導入方法を選ぶ
+
+次のどちらか一方で進めてください。行う変更は同じです。
+
+- **[AIに頼む](#ai-setup)**：AIに設定ファイルの修正とビルドを依頼します。
+- **[自分で修正する](#manual-setup)**：変更する場所と理由を確認しながら、自分で設定ファイルを修正します。
+
+Choose either **With AI** or **Manual setup**. Both methods prepare the same firmware.
 
 ---
 
-## AI に頼む / With AI
+<a id="ai-setup"></a>
+
+## 方法1：AIに頼む / With AI
+
+この方法では、ZMK Studioへの対応と、ちびボードアプリ用の拡張機能の追加を、まとめてAIに依頼します。以下の3つを進めてください。「自分で修正する」の手順を別に行う必要はありません。
+
+Ask the AI to prepare both Studio support and the app extensions. Follow the three steps below; you do not also need to follow the manual setup.
 
 ### 1. AI で zmk-config を開く / Open your zmk-config in an AI tool
 
@@ -35,7 +47,7 @@ cd zmk-config
 | Codex | `codex` |
 | Cursor など / etc. | フォルダを開く / Open the folder |
 
-### 2. これを貼る / Paste this
+### 2. 修正内容をAIに依頼する / Ask the AI to make the changes
 
 ```text
 https://github.com/tibiboard/zmk-studio-extras/blob/main/AGENTS.md を読んで、
@@ -53,20 +65,32 @@ settings unchanged. Make the build pass.
 URL を開けない AI には、[AGENTS.md](AGENTS.md) の中身を貼り、[studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) を自分で `config/` に置く。
 If your AI can't open URLs, paste [AGENTS.md](AGENTS.md) and put [studio_extras_slots.dtsi](config/studio_extras_slots.dtsi) into `config/` yourself.
 
-### 3. ファームを作って焼く / Build and flash
+### 3. ファームウェアを作成して書き込む / Build and flash
 
 ```bash
 git push
 ```
 
-GitHub の **Actions** → 最新のビルド → **Artifacts** から `.uf2` をダウンロード → 分割式は左右それぞれに対応するファームを書き込む → [4. 確かめる](#4-確かめる--check)
-GitHub **Actions** → latest run → **Artifacts** → download `.uf2` → flash each half with its matching firmware → [4. Check](#4-確かめる--check)
+GitHub の **Actions** → 最新のビルド → **Artifacts** から `.uf2` をダウンロード → 分割式は左右それぞれに対応するファームを書き込む → [導入後の動作確認](#verify)
+GitHub **Actions** → latest run → **Artifacts** → download `.uf2` → flash each half with its matching firmware → [Check after installation](#verify)
 
 ---
 
-## 1. ZMK Studio
+<a id="manual-setup"></a>
 
-ZMK Studio が使えるキーボードにする。/ Make your keyboard ZMK Studio-ready.
+## 方法2：自分で修正する / Manual setup
+
+**1はZMK Studioに対応させる作業、2・3はちびボードアプリ用の機能を追加する作業です。最後に4でファームウェアを作成して書き込みます。**
+
+ZMK Studioに対応済みの場合は、1の設定がそろっていることを確認してから、2へ進みます。既存のキー配置・レイヤー・コンボなどの設定は維持してください。
+
+Step 1 prepares ZMK Studio support; steps 2 and 3 add the chibiboard app extensions. Step 4 builds and flashes the firmware. If Studio already works, check the existing settings in step 1, then proceed to step 2. Preserve existing bindings and settings.
+
+### 1. ZMK Studioに対応させる / Enable ZMK Studio
+
+アプリがキーボードと通信できるように、Studio機能・USB通信・解錠キー・キーの並びの定義を設定します。
+
+Enable Studio and its USB transport, keep an unlock key, and provide a physical layout.
 公式 / Official: https://zmk.dev/docs/features/studio
 
 `config/<keyboard>.conf`
@@ -93,7 +117,11 @@ include:
 キーの並びの定義(physical layout)がない時 / If your keyboard has no physical layout:
 https://zmk.dev/docs/development/hardware-integration/physical-layouts
 
-## 2. west.yml
+### 2. ちびボードアプリ用のZMKに切り替える / Use the extended ZMK
+
+**ここからが、ちびボードアプリ用の変更です。** ファームウェアを作る際のZMKの取得先を、コンボ・タップダンス・マクロの編集機能を加えた版に変更します。
+
+**The app-specific changes start here.** Select the ZMK version that includes the combo, tap-dance and macro editors.
 
 `config/west.yml` — 自分の他のプロジェクト・モジュールは残し、`zmk` の取得先を変更します。下は該当部分の例です。
 Keep your other projects/modules. The example below shows the ZMK portion; do not overwrite unrelated entries.
@@ -111,7 +139,11 @@ manifest:
     path: config
 ```
 
-## 3. keymap
+### 3. アプリから編集するための枠を追加する / Add editing slots
+
+キー配置ファイルに、アプリがコンボ・タップダンス・マクロの設定を書き込める空き枠を追加します。今あるキーの位置や、設定済みのコンボを移動する作業ではありません。
+
+Add empty slots for app-based combo, tap-dance and macro settings. Keep your existing key positions and combos.
 
 [`config/studio_extras_slots.dtsi`](config/studio_extras_slots.dtsi) を自分の `config/` に置く。/ Copy it into your `config/`.
 
@@ -123,15 +155,28 @@ manifest:
 ```
 今ある `combos` はそのままで大丈夫。/ Existing `combos` can stay as they are.
 
-## 4. 確かめる / Check
+### 4. ファームウェアを作成して書き込む / Build and flash
 
-1. ビルド → 対応するファームを書き込む。分割式では左右のファームを取り違えないでください。/ Build → flash matching firmware for each half of a split keyboard.
-2. [ちびボードアプリ](https://tibiboard.net/) でつなぐ → **コンボ・タップダンス・マクロ** のタブが使える。/ Connect in the [chibiboard app](https://tibiboard.net/) → **Combos / Tap-Dances / Macros** tabs work.
+変更した設定を保存し、GitHub Actionsまたはローカル環境でビルドします。GitHub Actionsの場合は、最新のビルドの **Artifacts** からファームウェアをダウンロードしてください。
 
-3. コンボ・タップダンス・マクロを1つずつ作り、発動・変更・解除と、電源を入れ直しても設定が残るかを実機で確認します。通常の入力と左右接続も確認します。
+分割式では、左右それぞれに対応するファームウェアを書き込みます。
+
+Save your changes, build with GitHub Actions or locally, then flash each half with its matching firmware. For GitHub Actions, download the firmware from the latest build's **Artifacts**.
+
+---
+
+<a id="verify"></a>
+
+## 導入後の動作確認（どちらの方法でも行います） / Check after either method
+
+1. [ちびボードアプリ](https://tibiboard.net/) でつなぐ → **コンボ・タップダンス・マクロ** のタブが使える。/ Connect in the [chibiboard app](https://tibiboard.net/) → **Combos / Tap-Dances / Macros** tabs work.
+
+2. コンボ・タップダンス・マクロを1つずつ作り、発動・変更・解除と、電源を入れ直しても設定が残るかを実機で確認します。通常の入力と左右接続も確認します。
 Check each editor, execution, clearing and persistence after a power cycle, as well as normal typing and split connectivity.
 
-元に戻す: 保存した元のファームを正しい側へ書き戻します。ソースから作り直すなら、`west.yml`だけでなく`.conf`・`.keymap`・`build.yaml`など変更したファイルを元の控えへ戻します。アプリ内の設定は別途復元が必要な場合があります。
+### 元に戻す / Undo
+
+保存した元のファームを正しい側へ書き戻します。ソースから作り直すなら、`west.yml`だけでなく`.conf`・`.keymap`・`build.yaml`など変更したファイルを元の控えへ戻します。アプリ内の設定は別途復元が必要な場合があります。
 Undo: flash the backed-up original firmware to the correct half. When rebuilding from source, restore all changed files, including `.conf`, `.keymap` and `build.yaml`, from the backup. Runtime settings may need separate restoration.
 
 ---
