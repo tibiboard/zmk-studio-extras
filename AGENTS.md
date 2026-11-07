@@ -1,6 +1,6 @@
 # AGENTS.md — add zmk-studio-extras to a zmk-config
 
-Goal: add combo / tap-dance / macro editing to a compatible keyboard using the chibiboard app. Do not promise compatibility or hardware verification before testing.
+Goal: prepare keyboard-specific firmware for the chibiboard app by (1) enabling ZMK Studio support, if not already present, and (2) adding combo / tap-dance / macro editing extensions. Do not promise compatibility or hardware verification before testing.
 Before changing anything, back up the original firmware, complete config repository and runtime settings. Keep a reversible commit or file backup.
 Rule: do not change the user's existing keymap bindings, layers, combos, or settings. Only add.
 

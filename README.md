@@ -1,13 +1,13 @@
 # zmk-studio-extras
 
-対応するZMKキーボードに、[ちびボードアプリ](https://tibiboard.net/shop/使い方ガイド#app-downloads)でコンボ・タップダンス・マクロを編集する機能を追加する導入キットです。
-Add **combo / tap-dance / macro editing** to compatible ZMK keyboards for the [chibiboard app](https://tibiboard.net/shop/使い方ガイド#app-downloads).
+ZMKキーボードで、[ちびボードアプリ](https://tibiboard.net/shop/使い方ガイド#app-downloads)を使うための導入キットです。お使いのキーボード用ファームウェアに、次の2つを組み込みます。
 
-既存のキー配置を引き継ぐ前提で、専用のZMKと編集用の空き枠を導入します。機種に応じたビルドが必要です。
-The kit uses an extended ZMK and empty editing slots while preserving your source keymap. A keyboard-specific build is required.
+1. **ZMK Studioへの対応**
+2. **ちびボードアプリ用の拡張機能**（コンボ・タップダンス・マクロの設定変更）
 
-標準のZMKファームのままでは、この追加編集は使えません。ファームに定義済みのマクロ等をキーへ割り当てる操作と、中身の編集は別です。振動機能は含みません。
-These editors require the extended firmware. Assigning an existing behavior is different from editing its contents. Vibration is not included.
+ZMK Studioに対応済みの場合は、2の拡張機能を追加します。機種に合わせたファームウェアの作成・書き込みが必要です。既存のキー配置・レイヤー・コンボなどを変更するための手順ではありません。振動機能は含みません。
+
+This kit prepares keyboard-specific firmware for the chibiboard app: **(1) ZMK Studio support** and **(2) the app's combo / tap-dance / macro editing extensions**. If Studio is already supported, add the extensions. Preserve the existing keymap, layers and combos. Vibration is not included.
 
 先に現在のファーム（左右があれば両方）、zmk-config一式、アプリで変更した設定の控えを保存してください。ソースとアプリで変更した設定が同じとは限りません。
 Back up your current firmware for both halves, complete zmk-config and any runtime settings before migrating. Your source keymap may differ from settings edited in an app.
@@ -39,7 +39,8 @@ cd zmk-config
 
 ```text
 https://github.com/tibiboard/zmk-studio-extras/blob/main/AGENTS.md を読んで、
-この zmk-config に zmk-studio-extras を入れてください。
+この zmk-config をZMK Studioに対応させ、ちびボードアプリ用の拡張機能も追加してください。
+ZMK Studioに対応済みの部分は維持してください。
 今のキー配置・レイヤー・設定は変えないでください。ビルドが通るまで確かめてください。
 ```
 
