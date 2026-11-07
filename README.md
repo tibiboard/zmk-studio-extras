@@ -119,7 +119,7 @@ https://zmk.dev/docs/development/hardware-integration/physical-layouts
 
 ### 2. ちびボードアプリ用のZMKに切り替える / Use the extended ZMK
 
-**ここからが、ちびボードアプリ用の変更です。** ファームウェアを作る際のZMKの取得先を、コンボ・タップダンス・マクロの編集機能を加えた版に変更します。
+これにより、ちびボードアプリでマクロ・タップダンス・コンボの設定を変更できるようになります。
 
 **The app-specific changes start here.** Select the ZMK version that includes the combo, tap-dance and macro editors.
 
